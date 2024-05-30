@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Страница авторизации</title>
+</head>
+<body>
+  <form name="f" method="post" action="/process_login"/>
+    <label for="username">Введите имя пользователя:</label>
+    <input type="text" name="username" id="username"/>
+    <br>
+    <label for="password">Введите пароль:</label>
+    <input type="text" name="username" id="password">
+    <br>
+    <input type="submit" value="Login"/>
+
+    <div th:if="${param.error}" style="color: red">
+      Неправильные имя или пароль
+    </div>
+    
+  </form>
+
+  <form>
+      <!-- Email input -->
+      <div data-mdb-input-init class="form-outline mb-4">
+          <input type="email" id="form1Example1" class="form-control" />
+          <label class="form-label" for="form1Example1">Email address</label>
+      </div>
+
+      <!-- Password input -->
+      <div data-mdb-input-init class="form-outline mb-4">
+          <input type="password" id="form1Example2" class="form-control" />
+          <label class="form-label" for="form1Example2">Password</label>
+      </div>
+
+      <!-- 2 column grid layout for inline styling -->
+      <div class="row mb-4">
+          <div class="col d-flex justify-content-center">
+              <!-- Checkbox -->
+              <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+                  <label class="form-check-label" for="form1Example3"> Remember me </label>
+              </div>
+          </div>
+
+          <div class="col">
+              <!-- Simple link -->
+              <a href="#!">Forgot password?</a>
+          </div>
+      </div>
+
+      <!-- Submit button -->
+      <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">Sign in</button>
+  </form>
+</body>
+</html>

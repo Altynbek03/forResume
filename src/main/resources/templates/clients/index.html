@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Продукты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center my-4">Клиенты</h1>
+    <a href="/clients/create" class="btn btn-primary">Добавить клиенты</a>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Контактные данные</th>
+            <th>Фотография</th>
+            <th>Был добавлен(а) в</th>
+            <th>Пол</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="client : ${clients}">
+            <td th:text="${client.firstName}"></td>
+            <td th:text="${client.lastName}"></td>
+            <td th:text="${client.patronymic}"></td>
+            <td th:text="${client.contactNumber}"></td>
+            <td>
+                <a target="_blank" th:href="@{'/images/' + ${client.imageFileName}}"><img th:src="@{'/images/' + ${client.imageFileName}}" alt="" width="100"></a>
+            </td>
+            <td th:text="${client.createDate.toString().substring(0,10)}"></td>
+            <td th:text="${client.gender}"></td>
+            <td style="white-space: nowrap">
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/clients/edit(id=${client.id})}"> Редактировать</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
