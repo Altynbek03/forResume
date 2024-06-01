@@ -2,10 +2,14 @@ package kz.group.controller;
 
 import jakarta.validation.Valid;
 import kz.group.DTO.ClientDto;
+import kz.group.Security.PersonDetails;
 import kz.group.entity.ClientsEntity;
 import kz.group.repository.ClientsRepository;
 import kz.group.service.ClientsService;
+import kz.group.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/clients")
@@ -32,24 +37,27 @@ public class ClientsController {
     @Autowired
     private ClientsRepository clientsRepository;
 
-//    @GetMapping
-//    public String getClient(@RequestParam("firstname") String firstName) {
-//        ClientsEntity clientsEntity = clientsService.findByFirstname(firstName);
-//            if(clientsEntity == null) {
-//                return "Такого клиента не существует";
-//            }
-//            return clientsEntity.toString();
-//    }
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping({"/",""})
     public String showClientsPage(Model model) {
         List<ClientsEntity> clients = clientsRepository.findAll();
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         model.addAttribute("clients", clients);
+
         return "clients/index";
     }
 
     @GetMapping("/create")
     public String showCreatePage(Model model) {
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         ClientDto clientDto = new ClientDto();
         model.addAttribute("clientDto", clientDto);
         return "clients/addClient";
@@ -58,8 +66,13 @@ public class ClientsController {
     @PostMapping("/create")
     public String addClient(
             @Valid @ModelAttribute ClientDto clientDto,
+            Model model,
             BindingResult result
     ) {
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         if (clientDto.getImageFile().isEmpty()){
             result.addError(new FieldError("clientDto","imageFile","Не корректный файл или файл не выбран"));
         }
@@ -109,6 +122,10 @@ public class ClientsController {
             Model model,
             @RequestParam int id
     ){
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         try {
             ClientsEntity client = clientsRepository.findById(id).get();
             model.addAttribute("client", client);
@@ -137,6 +154,10 @@ public class ClientsController {
             @Valid @ModelAttribute ClientDto clientDto,
             BindingResult result
     ) {
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         try {
             ClientsEntity client = clientsRepository.findById(id).get();
             model.addAttribute("client", client);
@@ -184,4 +205,26 @@ public class ClientsController {
         return "redirect:/clients";
     }
 
+    @GetMapping("/delete")
+    public String deleteClient(
+            Model model,
+            @RequestParam int id
+    ){
+        try {
+            ClientsEntity client = clientsRepository.findById(id).get();
+
+            Path imagePath = Paths.get("public/images/" + client.getImageFileName());
+
+            try {
+                Files.delete(imagePath);
+            } catch (Exception exception){
+                System.out.println("Exception: " + exception.getMessage());
+            }
+
+            clientsRepository.delete(client);
+        } catch (Exception exception) {
+            System.out.println("Exception: " + exception.getMessage());
+        }
+        return "redirect:/clients";
+    }
 }

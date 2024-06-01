@@ -5,6 +5,7 @@ import kz.group.entity.ProductsEntity;
 import kz.group.DTO.ProductDto;
 import kz.group.repository.ProductsRepository;
 import kz.group.service.ProductsService;
+import kz.group.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -22,9 +23,15 @@ public class ProductsController {
     private ProductsService productsService;
     @Autowired
     private ProductsRepository productsRepository;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping({"","/"})
     public String showProductList(Model model){
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         List<ProductsEntity> products = productsRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         model.addAttribute("products", products);
         return "products/index";
@@ -32,6 +39,10 @@ public class ProductsController {
 
     @GetMapping("/create")
     public String showCreatePage(Model model){
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         ProductDto productDto = new ProductDto();
         model.addAttribute("productDto", productDto);
         return "products/createProduct";
@@ -40,8 +51,13 @@ public class ProductsController {
     @PostMapping("/create")
     public String createProduct(
             @Valid @ModelAttribute ProductDto productDto,
+            Model model,
             BindingResult result
     ){
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         if(result.hasErrors()){
             return "products/createProduct";
         }
@@ -62,6 +78,10 @@ public class ProductsController {
             Model model,
             @RequestParam int id
     ) {
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         try {
             ProductsEntity product = productsRepository.findById(id).get();
             model.addAttribute("product",product);
@@ -87,6 +107,10 @@ public class ProductsController {
             @Valid @ModelAttribute ProductDto productDto,
             BindingResult result
     ){
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
         try {
             ProductsEntity product = productsRepository.findById(id).get();
             model.addAttribute("product",product);
@@ -105,6 +129,20 @@ public class ProductsController {
         }
         return "redirect:/products";
     }
+
+    @GetMapping("/delete")
+    public String deleteProduct(
+            @RequestParam int id
+    ){
+        try {
+            ProductsEntity product = productsRepository.findById(id).get();
+            productsRepository.delete(product);
+        } catch (Exception exception){
+            System.out.println("Exception: " + exception.getMessage());
+        }
+        return "redirect:/products";
+    }
+
 
 
 

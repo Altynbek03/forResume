@@ -8,14 +8,66 @@
 </head>
 <body>
 
-    <h1 class="text-center">Добро пожаловать, <span th:text="${username}">Привет пользователь</span></h1>
-    <div sec:authorize="isAuthenticated()">Authenticated as <span sec:authentication="name"></span></div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/hello">Старт ап</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/clients/">Клиенты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products/">Продукты</a>
+                </li>
+                <li class="nav-item">
+                    <a th:if="${userRole==true}" class="nav-link" href="/users/">Пользователи</a>
+                </li>
+            </ul>
+            <form class="d-flex" th:action="@{/logout}" th:method="POST">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${username}">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Профиль</a></li>
+                            <li><a class="dropdown-item" href="#">Тест</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Тест</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-success" type="submit">Выйти</button>
+            </form>
+        </div>
+    </div>
+</nav>
 
-    <form th:action="@{/logout}" th:method="POST">
-        <input type="submit" value="Выйти"/>
-    </form>
+<!--<nav class="navbar navbar-expand-lg navbar-light bg-light">-->
+<!--    <a class="navbar-brand" href="/">Sweater</a>-->
+<!--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--        <span class="navbar-toggler-icon"></span>-->
+<!--    </button>-->
 
-    <a class="btn-primary btn" href="/products">Продукты</a>
-    <a class="btn btn-primary" href="/clients/">Клиенты</a>
+<!--    <div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+<!--        <ul class="navbar-nav mr-auto">-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="/products/">Продукты</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="/clients/">Клиенты</a>-->
+<!--            </li>-->
+<!--        </ul>-->
+
+<!--        <div class="navbar-text mr-3" th:text="${username}"></div>-->
+<!--        <form th:action="@{/logout}" th:method="POST">-->
+<!--            <input class="btn-primary btn" type="submit" value="Выйти"/>-->
+<!--        </form>-->
+
+<!--    </div>-->
+<!--</nav>-->
+
 </body>
 </html>

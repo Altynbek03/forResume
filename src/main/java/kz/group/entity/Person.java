@@ -45,6 +45,10 @@ public class Person {
         this.password = password;
     }
 
+    public boolean isAdmin() {
+        return role.contains("ROLE_ADMIN");
+    }
+
     public Long getId() {
         return id;
     }
