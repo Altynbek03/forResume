@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import kz.group.DTO.ClientDto;
 import kz.group.Security.PersonDetails;
 import kz.group.entity.ClientsEntity;
+import kz.group.entity.Person;
 import kz.group.repository.ClientsRepository;
 import kz.group.service.ClientsService;
+import kz.group.service.DocumentGenerator;
 import kz.group.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +45,13 @@ public class ClientsController {
     @Autowired
     private UsersService usersService;
 
+
+    @Autowired
+    private SpringTemplateEngine springTemplateEngine;
+
+    @Autowired
+    private DocumentGenerator documentGenerator;
+
     @GetMapping({"/",""})
     public String showClientsPage(Model model) {
         List<ClientsEntity> clients = clientsRepository.findAll();
@@ -49,6 +61,27 @@ public class ClientsController {
         model.addAttribute("userRole", isOwner);
         model.addAttribute("clients", clients);
 
+        return "clients/index";
+    }
+
+    @PostMapping({"/",""})
+    public String showSortedClientPage(
+            Model model,
+            @RequestParam String clientLastName
+    )
+    {
+        if(clientLastName.isEmpty()){
+            List<ClientsEntity> clients = clientsRepository.findAll();
+            model.addAttribute("clients", clients);
+        } else {
+            List<ClientsEntity> clients = clientsService.findByLastName(clientLastName);
+            model.addAttribute("clients", clients);
+        }
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
+        model.addAttribute("clientLastName", clientLastName);
         return "clients/index";
     }
 
@@ -66,8 +99,8 @@ public class ClientsController {
     @PostMapping("/create")
     public String addClient(
             @Valid @ModelAttribute ClientDto clientDto,
-            Model model,
-            BindingResult result
+            BindingResult result,
+            Model model
     ) {
         String username = usersService.getUsername();
         boolean isOwner = usersService.isOwner();
@@ -227,4 +260,50 @@ public class ClientsController {
         }
         return "redirect:/clients";
     }
+
+//    @GetMapping("/showUser")
+//    public String showUser(
+//            @RequestParam int id,
+//            Model model
+//    ){
+//        String username = usersService.getUsername();
+//        boolean isOwner = usersService.isOwner();
+//        model.addAttribute("username", username);
+//        model.addAttribute("userRole", isOwner);
+//
+//        ClientsEntity client = clientsRepository.findById(id).get();
+//        model.addAttribute("client", client);
+//        return "clients/showUser";
+//    }
+        @GetMapping("/generateContract")
+        public String generateContract(
+                @RequestParam int id,
+                Model model
+        ){
+            String finalHTML = null;
+            ClientsEntity client = clientsService.findById((long) id).get();
+            Context context = new Context();
+            context.setVariable("client", client);
+            finalHTML = springTemplateEngine.process("document/test",context);
+
+            documentGenerator.generateDocument(finalHTML,client);
+
+
+            return "redirect:/clients";
+        }
+
+        @GetMapping("/clientProfile")
+        public String clientProfile(
+                @RequestParam int id,
+                Model model
+        ){
+            String username = usersService.getUsername();
+            boolean isOwner = usersService.isOwner();
+            model.addAttribute("username", username);
+            model.addAttribute("userRole", isOwner);
+
+            ClientsEntity client = clientsRepository.findById(id).get();
+            model.addAttribute("client", client);
+            return "clients/clientProfile";
+        }
 }

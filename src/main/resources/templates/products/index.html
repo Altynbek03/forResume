@@ -45,7 +45,7 @@
 </nav>
 <div class="container">
     <h1 class="text-center my-4">Продукты</h1>
-    <a href="/products/create" class="btn btn-primary">Создать продукт</a>
+    <a href="/products/create" th:if="${userRole==true}" class="btn btn-primary">Создать продукт</a>
 
     <table class="table">
         <thead>
@@ -55,7 +55,7 @@
                 <th>Была создана в </th>
                 <th>Количество занятии</th>
                 <th>Описание</th>
-                <th>Действия</th>
+                <th th:if="${userRole==true}">Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -68,7 +68,8 @@
                 <td th:text="${product.description}"></td>
                 <td style="white-space: nowrap">
                     <a class="btn btn-primary btn-sm"
-                       th:href="@{/products/edit(id=${product.id})}"> Редактировать</a>
+                       th:href="@{/products/edit(id=${product.id})}"
+                       th:if="${userRole==true}"> Редактировать</a>
                     <a class="btn btn-danger btn-sm"
                        th:href="@{/products/delete(id=${product.id})}"
                        th:if="${userRole == true}"

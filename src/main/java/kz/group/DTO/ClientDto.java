@@ -9,11 +9,11 @@ public class ClientDto {
     private String firstName;
     @NotEmpty(message = "Фамилия не подходит")
     private String lastName;
-    @NotEmpty(message = "Отчество не подходит")
+//    @NotEmpty(message = "Отчество не подходит")
     private String patronymic;
     @NotEmpty(message = "Номер не подходит")
     private String contactNumber;
-    @NotEmpty(message = "Почта не подходит")
+//    @NotEmpty(message = "Почта не подходит")
     private String email;
 
     private String gender;

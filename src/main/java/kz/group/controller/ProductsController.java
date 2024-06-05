@@ -50,8 +50,8 @@ public class ProductsController {
 
     @PostMapping("/create")
     public String createProduct(
-            @Valid @ModelAttribute ProductDto productDto,
             Model model,
+            @Valid @ModelAttribute ProductDto productDto,
             BindingResult result
     ){
         String username = usersService.getUsername();

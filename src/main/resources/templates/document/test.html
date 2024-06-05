@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Договор на абонемент в зал ETALON</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .contract {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #2980b9;
+            border-radius: 10px;
+            background-color: #ecf0f1;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        ul {
+            margin: 0;
+            padding: 0 20px;
+        }
+        .signature {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        .signature div {
+            text-align: center;
+            width: 40%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="contract">
+    <h1>Договор на абонемент в зал ETALON</h1>
+    <p><strong>Город:</strong> [Город]</p>
+    <p><strong>Дата:</strong> [Дата]</p>
+
+    <div class="section-title">Стороны договора:</div>
+    <p><strong>Арендодатель:</strong> Зал ETALON, в лице [ФИО представителя], действующего на основании [документ], именуемый в дальнейшем "Арендодатель".</p>
+    <p><strong>Арендатор:</strong><p th:text="${client.firstName}"></p>, паспорт [серия и номер], выдан [кем выдан, дата выдачи], именуемый в дальнейшем "Арендатор".</p>
+
+    <div class="section-title">Предмет договора:</div>
+    <p>Арендодатель предоставляет Арендатору абонемент на посещение зала "ETALON" по адресу [Адрес зала] для проведения тренировок на срок с [начальная дата] до [конечная дата].</p>
+
+    <div class="section-title">Условия оплаты:</div>
+    <p>Стоимость абонемента составляет [сумма] рублей. Оплата производится [условия оплаты: предоплата, ежемесячно и т.д.] не позднее [срок оплаты].</p>
+
+    <div class="section-title">Права и обязанности сторон:</div>
+    <ul>
+        <li>Арендодатель обязуется предоставить доступ к залу в рабочие часы и обеспечить его чистоту и исправность оборудования.</li>
+        <li>Арендатор обязуется соблюдать правила посещения зала, поддерживать порядок и аккуратность.</li>
+        <li>Арендатор обязуется не причинять ущерб оборудованию и инвентарю зала.</li>
+    </ul>
+
+    <div class="section-title">Ответственность сторон:</div>
+    <p>В случае порчи имущества зала Арендатор обязуется возместить причиненный ущерб в полном объеме.</p>
+
+    <div class="section-title">Прочие условия:</div>
+    <p>Все изменения и дополнения к настоящему договору действительны только в письменной форме и подписываются обеими сторонами.</p>
+    <p>Настоящий договор составлен в двух экземплярах, имеющих равную юридическую силу, по одному для каждой из сторон.</p>
+
+    <div class="signature">
+        <div>
+            <p>Арендодатель</p>
+            <div class="signature-line"></div>
+            <p>[ФИО представителя]</p>
+        </div>
+        <div>
+            <p>Арендатор</p>
+            <div class="signature-line"></div>
+            <p>[ФИО арендатора]</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

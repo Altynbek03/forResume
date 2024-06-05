@@ -5,12 +5,15 @@ import kz.group.entity.ProductsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ClientsRepository extends JpaRepository<ClientsEntity, Long> {
 
-    Optional<ClientsEntity> findByFirstName(String firstName);
+    List<ClientsEntity> findByFirstName(String name);
+
     Optional<ClientsEntity> findById(int id);
 
+    List<ClientsEntity> findByLastName(String lastName);
 }

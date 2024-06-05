@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin","/users").hasRole("OWNER")
                         .requestMatchers("/clients/**","products/**").hasAnyRole("ADMIN","OWNER")
                         .requestMatchers("/static/**","/templates/**",
-                                        "/auth/**").permitAll()
+                                        "/auth/**","/clients/generateContract").permitAll()
                         .anyRequest().hasAnyRole("ADMIN","OWNER")
                 )
                 .formLogin((form) -> form
