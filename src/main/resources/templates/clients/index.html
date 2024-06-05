@@ -79,7 +79,8 @@
             <td th:text="${client.gender}"></td>
             <td style="white-space: nowrap">
                 <a class="btn btn-primary btn-sm"
-                   th:href="@{/clients/generateContract(id=${client.id})}">Сгенерировать договор</a>
+                   target="_blank"
+                   th:href="@{'/documents/' +${client.contractFileName}}">Посмотреть договор</a>
             </td>
         </tr>
         </tbody>

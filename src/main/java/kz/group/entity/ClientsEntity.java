@@ -34,6 +34,8 @@ public class ClientsEntity {
     private String gender;
     @Column(name = "image_file_name")
     private String imageFileName;
+    @Column(name = "contract_file_name")
+    private String contractFileName;
 
     public Long getId() {
         return id;
@@ -121,5 +123,13 @@ public class ClientsEntity {
 
     public void setImageFileName(String imageFileName) {
         this.imageFileName = imageFileName;
+    }
+
+    public String getContractFileName() {
+        return contractFileName;
+    }
+
+    public void setContractFileName(String contractFileName) {
+        this.contractFileName = contractFileName;
     }
 }
