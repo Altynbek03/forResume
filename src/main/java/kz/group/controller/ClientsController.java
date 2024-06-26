@@ -2,24 +2,25 @@ package kz.group.controller;
 
 import jakarta.validation.Valid;
 import kz.group.DTO.ClientDto;
-import kz.group.Security.PersonDetails;
+import kz.group.entity.AbonementEntity;
 import kz.group.entity.ClientsEntity;
-import kz.group.entity.Person;
+import kz.group.entity.DocumentsEntity;
+import kz.group.entity.ProductsEntity;
+import kz.group.repository.AbonementRepository;
 import kz.group.repository.ClientsRepository;
-import kz.group.service.ClientsService;
-import kz.group.service.DocumentGenerator;
-import kz.group.service.UsersService;
+import kz.group.repository.DocumentsRepository;
+import kz.group.repository.ProductsRepository;
+import kz.group.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.context.IContext;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/clients")
@@ -45,16 +46,28 @@ public class ClientsController {
     @Autowired
     private UsersService usersService;
 
-
     @Autowired
     private SpringTemplateEngine springTemplateEngine;
 
     @Autowired
     private DocumentGenerator documentGenerator;
 
+    @Autowired
+    private DocumentsService documentsService;
+
+    @Autowired
+    private ProductsRepository productsRepository;
+
+    @Autowired
+    private AbonementService abonementService;
+    @Autowired
+    private DocumentsRepository documentsRepository;
+    @Autowired
+    private AbonementRepository abonementRepository;
+
     @GetMapping({"/",""})
     public String showClientsPage(Model model) {
-        List<ClientsEntity> clients = clientsRepository.findAll();
+        List<ClientsEntity> clients = clientsRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
         String username = usersService.getUsername();
         boolean isOwner = usersService.isOwner();
         model.addAttribute("username", username);
@@ -141,7 +154,7 @@ public class ClientsController {
         client.setContactNumber(clientDto.getContactNumber());
         client.setEmail(clientDto.getEmail());
         client.setGender(clientDto.getGender());
-        client.setAgreement(true);
+        client.setDateOfBorn(clientDto.getDateOfBorn());
         client.setCreateDate(LocalDateTime.now());
         client.setImageFileName(strogeFileName);
 
@@ -170,6 +183,7 @@ public class ClientsController {
             clientDto.setContactNumber(client.getContactNumber());
             clientDto.setEmail(client.getEmail());
             clientDto.setGender(client.getGender());
+            clientDto.setDateOfBorn(client.getDateOfBorn());
 
             model.addAttribute("clientDto", clientDto);
 
@@ -230,6 +244,7 @@ public class ClientsController {
             client.setContactNumber(clientDto.getContactNumber());
             client.setEmail(clientDto.getEmail());
             client.setGender(clientDto.getGender());
+            client.setDateOfBorn(clientDto.getDateOfBorn());
 
             clientsRepository.save(client);
         } catch (Exception exception) {
@@ -261,49 +276,25 @@ public class ClientsController {
         return "redirect:/clients";
     }
 
-//    @GetMapping("/showUser")
-//    public String showUser(
-//            @RequestParam int id,
-//            Model model
-//    ){
-//        String username = usersService.getUsername();
-//        boolean isOwner = usersService.isOwner();
-//        model.addAttribute("username", username);
-//        model.addAttribute("userRole", isOwner);
-//
-//        ClientsEntity client = clientsRepository.findById(id).get();
-//        model.addAttribute("client", client);
-//        return "clients/showUser";
-//    }
-        @GetMapping("/generateContract")
-        public String generateContract(
-                @RequestParam int id,
-                Model model
-        ){
-            String finalHTML = null;
-            ClientsEntity client = clientsService.findById((long) id).get();
-            Context context = new Context();
-            context.setVariable("client", client);
-            finalHTML = springTemplateEngine.process("document/test",context);
+    @GetMapping("/clientProfile")
+    public String clientProfile(
+            @RequestParam int id,
+            Model model
+    ){
+        boolean hasAgreement = documentsService.hasAgreement(id);
+        String agreementFileName = documentsService.clientAgreementFileName(id);
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
 
-            documentGenerator.generateDocument(finalHTML,client);
+        List<DocumentsEntity> clientDocuments = documentsRepository.findByClientId(id);
+        model.addAttribute("clientDocuments", clientDocuments);
 
-
-            return "redirect:/clients";
-        }
-
-        @GetMapping("/clientProfile")
-        public String clientProfile(
-                @RequestParam int id,
-                Model model
-        ){
-            String username = usersService.getUsername();
-            boolean isOwner = usersService.isOwner();
-            model.addAttribute("username", username);
-            model.addAttribute("userRole", isOwner);
-
-            ClientsEntity client = clientsRepository.findById(id).get();
-            model.addAttribute("client", client);
-            return "clients/clientProfile";
-        }
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
+        model.addAttribute("clientContractExists", hasAgreement);
+        ClientsEntity client = clientsRepository.findById(id).get();
+        model.addAttribute("agreementFileName", agreementFileName);
+        model.addAttribute("client", client);
+        return "clients/clientProfile";
+    }
 }

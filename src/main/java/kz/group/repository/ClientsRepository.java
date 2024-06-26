@@ -16,4 +16,6 @@ public interface ClientsRepository extends JpaRepository<ClientsEntity, Long> {
     Optional<ClientsEntity> findById(int id);
 
     List<ClientsEntity> findByLastName(String lastName);
+
+
 }

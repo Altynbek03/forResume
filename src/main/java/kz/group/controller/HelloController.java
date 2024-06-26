@@ -22,7 +22,7 @@ public class HelloController {
     @Autowired
     private UsersService usersService;
 
-    @GetMapping("/hello")
+    @GetMapping({"/hello","/"})
     public String currentUser(@ModelAttribute("user") @Valid Person person, BindingResult result, Model model) {
         String username = usersService.getUsername();
         boolean isOwner = usersService.isOwner();

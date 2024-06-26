@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма Согласия на обработку персональных данных</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            max-width: 1300px;
+            padding: 10px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .signature-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-section div {
+            width: 45%;
+        }
+        .date {
+            text-align: right;
+        }
+
+        .text {
+            text-align: justify;
+        }
+
+        .margin{
+            margin-left: 450px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p class="margin">Директору фитнес зала<br>
+        ТОО «ETALON»<br>
+        Директору Артыкбаева А.О.<br>
+        от <strong th:text="${client.lastName + ' ' + client.firstName + ' ' + client.patronymic}"></strong><br>
+    </p>
+
+    <h4 style="text-align: center"><strong>СОГЛАСИЕ <br>на обработку персональных данных</strong></h4>
+    <p class="text">Я, <strong th:text="${client.lastName + ' ' + client.firstName + ' ' + client.patronymic}"></strong> (дата рождения <strong th:text="${client.dateOfBorn.toString().substring(0,10)}"></strong>),
+        в соответствии со статьей 7 Закона РК от 21 мая 2013 года №94-V «О персональных данных и их защите»,
+        в целях:</p>
+    <ul>
+        <li class="text">обеспечения соблюдения требований законов и иных нормативных правовых актов;</li>
+        <li class="text">проверки добросовестности и оценки деловой репутации Компании, которую я представляю, в качестве потенциального контрагента даю согласие ТОО «ETALON» (БИН У МЕНЯ ВСЕ ТАКЖЕ НЕТ БИНААААААА), расположенному по адресу: Республика Казахстан, г. Темиртау, пр. Республики, 77/1, на автоматизированную, а также без использования средств автоматизации обработку моих персональных данных, а именно совершение действий, предусмотренных статьей 5 Закона РК от 21 мая 2013 года №94-V «О персональных данных и их защите». Перечень моих персональных данных, на обработку которых я даю согласие:</li>
+    </ul>
+    <ul style="list-style: none">
+        <li>- фамилия, имя, отчество;</li>
+        <li>- контактные данные;</li>
+        <li>- данные он email;</li>
+        <li>- возраст;</li>
+        <li>- дата рождения</li>
+    </ul>
+    <p class="text">Настоящее согласие действует со дня его подписания до дня отзыва в письменной форме.
+        Я проинформирован(-а), что настоящее согласие может быть отозвано мной заявлением в письменной форме.
+        Я проинформирован(-а), что в случае отзыва мной настоящего согласия представленная мною Компания к дальнейшим процедурам маркетинга допущена не будет.</p>
+
+    <div class="signature-section">
+        <div>Дата: <strong th:text="${#dates.format(#dates.createNow(), 'dd MM yyyy')}"></strong></div>
+        <div class="date">ПОДПИСЬ: </div>
+    </div>
+</div>
+</body>
+</html>

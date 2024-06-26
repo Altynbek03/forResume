@@ -47,85 +47,55 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 mx-auto rounded border p-4 m-4">
-                <h2 class="text-center mb-5">Новый клиент</h2>
-                <form method="post" enctype="multipart/form-data" th:object="${clientDto}">
+                <h2 class="text-center mb-5">Назначение абонемента</h2>
+                <form method="post" enctype="multipart/form-data">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">ID</label>
+                        <div class="col-sm-8">
+                            <input readonly class="form-control-plaintext" th:value="${client.id}" name="clientId"/>
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Имя</label>
                         <div class="col-sm-8">
-                            <input class="form-control" th:field="${clientDto.firstName}">
-                            <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="text-danger"
-                                th:errors="${clientDto.firstName}"></p>
+                            <input readonly class="form-control-plaintext" th:value="${client.firstName}">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Фамилия</label>
                         <div class="col-sm-8">
-                            <input class="form-control" th:field="${clientDto.lastName}"/>
-                            <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.lastName}"></p>
+                            <input readonly class="form-control-plaintext" th:value="${client.lastName}">
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Отчество</label>
+                        <label class="col-sm-4 col-form-label" th:if="${client.patronymic.isEmpty() == false}" >Отчество</label>
                         <div class="col-sm-8">
-                            <input class="form-control" th:field="${clientDto.patronymic}">
-                            <p th:if="${#fields.hasErrors('patronymic')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.patronymic}"></p>
+                            <input readonly class="form-control-plaintext" th:if="${client.patronymic.isEmpty() == false}" th:value="${client.patronymic}">
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Дата рождения</label>
+                        <label class="col-sm-4 col-form-label">Был(а) создана </label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" th:field="${clientDto.dateOfBorn}">
-                            <p th:if="${#fields.hasErrors('dateOfBorn')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.dateOfBorn}"></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Контактные данные</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" th:field="${clientDto.contactNumber}">
-                            <p th:if="${#fields.hasErrors('contactNumber')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.contactNumber}"></p>
+                            <input readonly class="form-control-plaintext" th:value="${client.createDate.toString().substring(0,10)}">
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Почта</label>
+                        <div style="color: red;font-size: 16px" th:text="${message}"></div>
+                        <label class="col-sm-4 col-form-label">Выберите абонемент </label>
                         <div class="col-sm-8">
-                            <input type="email" class="form-control" th:field="${clientDto.email}">
-                            <p th:if="${#fields.hasErrors('email')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.email}"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Пол</label>
-                        <div class="col-sm-8">
-                            <select class="form-select" th:field="${clientDto.gender}">
-                                <option value="Мужчина">Мужчина</option>
-                                <option value="Женщина">Женщина</option>
+                            <select class="form-control-plaintext" name="productId">
+                                <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.productName}"></option>
                             </select>
-                            <p th:if="${#fields.hasErrors('gender')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.gender}"></p>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Фотография</label>
-                        <div class="col-sm-8">
-                            <input type="file" class="form-control" th:field="${clientDto.imageFile}">
-                            <p th:if="${#fields.hasErrors('imageFile')}" th:errorclass="text-danger"
-                               th:errors="${clientDto.imageFile}"></p>
-                        </div>
-                    </div>
-
                     <div class="row">
                         <div class="offset-sm-4 col-sm-4 d-grid">
-                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <button type="submit" class="btn btn-primary">Назначить</button>
                         </div>
                         <div class="col-sm-4 d-gird">
-                            <a href="/clients/" class="btn btn-output-primary" role="button">Отменить</a>
+                            <a th:href="@{/clients/clientProfile(id=${client.id})}" class="btn btn-output-primary" role="button">Отменить</a>
                         </div>
                     </div>
                 </form>

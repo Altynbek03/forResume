@@ -44,6 +44,7 @@
     </div>
 </nav>
 
+
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-4">
@@ -52,12 +53,15 @@
                     <img th:src="@{'/images/' + ${client.imageFileName}}" alt="avatar"
                          class="rounded" style="width: 200px;">
                     <h5 th:text="${client.firstName + ' ' +client.lastName + ' ' +client.patronymic}" class="my-3"></h5>
-                    <p class="text-center mb-1">Тут будет дата рождения</p>
+                    <p class="text-center mb-1" th:text="${client.dateOfBorn.toString().substring(0,10)}"></p>
                     <p class="text-center mb-4">Тут будет последнее посещение</p>
+                    <div class="d-flex justify-content-center mb-2">
+                        <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">Войти в зал</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-8 d-flex flex-column">
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="row">
@@ -134,11 +138,49 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <a class="btn btn-info " th:href="@{/clients/edit(id=${client.id})}">Редактировать</a>
-                            <a class="btn btn-info " th:href="@{/clients/generateContract(id=${client.id})}">Сгенерировать договор</a>
+                            <a class="btn btn-info " th:if = "${clientContractExists == false}"
+                                                    th:href="@{/documents/generateUserAgreement(clientId=${client.id})}"
+                                                     onclick="return confirm('Вы уверены что хотите сгенерировать договор')">Сгенерировать договор</a>
+                            <a class="btn btn-info" th:if="${clientContractExists == true}"
+                                                    target="_blank"
+                                                    th:href="@{'/agreements/' + ${agreementFileName}}">Пользовательское соглашение</a>
+                            <a class="btn btn-primary" th:href="@{/abonement/setAbonement(clientId=${client.id})}">Назначить абонемент</a>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <a class="btn btn-info " th:href="@{/clients/edit(id=${client.id})}">Абонементы</a>
+                            <a class="btn btn-primary" th:href="@{/abonement/setAbonement(clientId=${client.id})}">Посещения</a>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Абонемент</th>
+                            <th>Был заключен</th>
+                            <th>Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="clientDocument : ${clientDocuments}">
+                            <td th:text="${clientDocument.contractType}"></td>
+                            <td th:text="${clientDocument.createDate.toString().substring(0,10)}"></td>
+                            <td>
+                                <a  target="_blank"
+                                    class="btn btn-primary"
+                                    th:href="@{'/abonements/' + ${clientDocument.contractFileName}}">Посмотреть</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

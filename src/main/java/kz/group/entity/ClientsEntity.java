@@ -3,7 +3,10 @@ package kz.group.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CollectionId;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -13,7 +16,7 @@ public class ClientsEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -24,8 +27,6 @@ public class ClientsEntity {
     private String contactNumber;
     @Column(name = "email")
     private String email;
-    @Column(name = "agreement")
-    private boolean agreement;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "update_date")
@@ -34,14 +35,14 @@ public class ClientsEntity {
     private String gender;
     @Column(name = "image_file_name")
     private String imageFileName;
-    @Column(name = "contract_file_name")
-    private String contractFileName;
+    @Column(name = "date_of_born")
+    private LocalDate dateOfBorn;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -85,14 +86,6 @@ public class ClientsEntity {
         this.email = email;
     }
 
-    public boolean isAgreement() {
-        return agreement;
-    }
-
-    public void setAgreement(boolean agreement) {
-        this.agreement = agreement;
-    }
-
     public LocalDateTime getCreateDate() {
         return createDate;
     }
@@ -125,11 +118,5 @@ public class ClientsEntity {
         this.imageFileName = imageFileName;
     }
 
-    public String getContractFileName() {
-        return contractFileName;
-    }
 
-    public void setContractFileName(String contractFileName) {
-        this.contractFileName = contractFileName;
-    }
 }
