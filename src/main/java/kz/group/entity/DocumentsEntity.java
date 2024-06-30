@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -22,6 +24,7 @@ public class DocumentsEntity {
     private String contractType;
     @Column(name = "create_date")
     private LocalDateTime createDate;
+
 
     public int getId() {
         return id;
@@ -62,4 +65,5 @@ public class DocumentsEntity {
     public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
+
 }

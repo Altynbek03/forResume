@@ -1,7 +1,6 @@
 package kz.group.repository;
 
 import kz.group.entity.ClientsEntity;
-import kz.group.entity.ProductsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ public interface ClientsRepository extends JpaRepository<ClientsEntity, Long> {
 
     List<ClientsEntity> findByFirstName(String name);
 
-    Optional<ClientsEntity> findById(int id);
+    Optional<ClientsEntity> findById(long id);
 
     List<ClientsEntity> findByLastName(String lastName);
 

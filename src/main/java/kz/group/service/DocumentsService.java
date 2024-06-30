@@ -1,13 +1,14 @@
 package kz.group.service;
 
-import kz.group.entity.AbonementEntity;
 import kz.group.entity.DocumentsEntity;
 import kz.group.repository.DocumentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocumentsService {
@@ -18,7 +19,11 @@ public class DocumentsService {
         return documentsRepository.findByClientId(clientId);
     }
 
-    public boolean hasAgreement(int clienId) {
+    public Optional<DocumentsEntity> findById(long documentId) {
+        return documentsRepository.findById(documentId);
+    }
+
+    public boolean hasAgreement(long clienId) {
         List<DocumentsEntity> documents = documentsRepository.findByClientId(clienId);
         for(DocumentsEntity document : documents) {
             document.getContractType().equals("agreement");
@@ -27,7 +32,7 @@ public class DocumentsService {
         return false;
     }
 
-    public String clientAgreementFileName(int clienId) {
+    public String clientAgreementFileName(long clienId) {
         List<DocumentsEntity> documents = documentsRepository.findByClientId(clienId);
         for(DocumentsEntity document : documents) {
             document.getContractType().equals("agreement");
@@ -35,5 +40,17 @@ public class DocumentsService {
         }
         return null;
     }
+
+    public List<DocumentsEntity> clientAbonementContracts(int clientId,List<DocumentsEntity> documents){
+        List<DocumentsEntity> abonements = new ArrayList<>();
+        for(DocumentsEntity document : documents) {
+            if((!document.getContractType().equals("agreement"))&& document.getClientId()==clientId) {
+                abonements.add(document);
+            }
+        }
+        return abonements;
+    }
+
+
 
 }

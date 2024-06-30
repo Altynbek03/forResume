@@ -3,8 +3,10 @@ package kz.group.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -23,52 +25,14 @@ public class AbonementEntity {
     private LocalDateTime createdDate;
     @Column(name = "status")
     private String status;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public int getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public int getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(int documentId) {
-        this.documentId = documentId;
-    }
+    @Column(name = "start_date")
+    private LocalDate startDate;
+    @Column(name = "end_date")
+    private LocalDate endDate;
+    @Column(name = "active_days")
+    private int activeDays;
+    @Column(name = "UUID")
+    private UUID uuid;
+    @Column(name = "client_in_gym")
+    private Boolean clientInGym;
 }

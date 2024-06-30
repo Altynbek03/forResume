@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Системные пользователи</title>
+    <title>Продукты</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/clients/">Клиенты</a>
+                    <a class="nav-link" href="/clients/">Клиенты</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/products/">Продукты</a>
@@ -25,7 +25,7 @@
                     <a th:if="${userRole==true}" class="nav-link" href="/users/">Пользователи</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/visits/v1/inGym">В зале</a>
+                    <a class="nav-link active" href="/visits/v1/inGym">В зале</a>
                 </li>
             </ul>
             <form class="d-flex" th:action="@{/logout}" th:method="POST">
@@ -47,33 +47,40 @@
     </div>
 </nav>
 <div class="container">
-    <h1 class="text-center my-4">Администраторы</h1>
-    <a href="/auth/registration" class="btn btn-primary">Добавить администратора</a>
-
+    <h1 class="text-center my-4">Клиенты</h1>
+    <div class="d-flex justify-content-between">
+        <form method="post" th:action="@{/clients/searchedClients}" class="d-flex justify-content-between">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input name="clientLastName" class="form-control me-2" type="search" th:value="${clientLastName}" placeholder="Введите фамилию" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Найти</button>
+        </form>
+    </div>
     <table class="table">
         <thead>
         <tr>
-            <th>Пользовательское имя</th>
-            <th>Роль</th>
+            <th>ФИО</th>
+            <th>Контактные данные</th>
+            <th>Вошел в </th>
+            <th>Пол</th>
             <th>Действия</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.role == 'ROLE_ADMIN' ? 'Админ' : 'Владелец'}"></td>
-            <td style="white-space: nowrap">
-                <a class="btn btn-primary btn-sm"
-                   th:href="@{/users/edit(id=${user.id})}"> Редактировать</a>
-                <a class="btn btn-danger btn-sm"
-                   th:href="@{/users/delete(id=${user.id})}"
-                   th:if="${user.role == 'ROLE_ADMIN'}"
-                   onclick="return confirm('Вы уверены?')">Удалить</a>
+        <tr th:each="clientInGym : ${clientsInGyms}">
+            <td>
+                <a th:text="${clientInGym.firstName + ' ' + clientInGym.lastName + ' ' + clientInGym.patronimyc}"
+                   th:href="@{/clients/clientProfile(id=${clientInGym.clientId})}"></a>
+            </td>
+            <td th:text="${clientInGym.contactNumber}"></td>
+            <td th:text="${clientInGym.visitDate.toString().substring(11,19)}"></td>
+            <td th:text="${clientInGym.gender}"></td>
+            <td>
+                <a th:href="@{/visits/v1/exitTheGym(clientId=${clientInGym.clientId},abonementId=${clientInGym.abonementId})}"
+                   class="btn btn-primary ms-1">Выйти из зала</a>
             </td>
         </tr>
         </tbody>
     </table>
-
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

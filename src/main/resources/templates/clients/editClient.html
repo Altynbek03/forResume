@@ -24,6 +24,9 @@
                 <li class="nav-item">
                     <a th:if="${userRole==true}" class="nav-link" href="/users/">Пользователи</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/visits/v1/inGym">В зале</a>
+                </li>
             </ul>
             <form class="d-flex" th:action="@{/logout}" th:method="POST">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">

@@ -1,6 +1,7 @@
 package kz.group.DTO;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ public class ClientDto {
 
     private String gender;
     private MultipartFile imageFile;
+    @NotNull(message = "Вы не выбрали дату рождения")
     private LocalDate dateOfBorn;
 
 }

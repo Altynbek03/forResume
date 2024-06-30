@@ -4,15 +4,14 @@ import jakarta.validation.Valid;
 import kz.group.DTO.ClientDto;
 import kz.group.entity.AbonementEntity;
 import kz.group.entity.ClientsEntity;
-import kz.group.entity.DocumentsEntity;
-import kz.group.entity.ProductsEntity;
+import kz.group.entity.VisitsEntity;
 import kz.group.repository.AbonementRepository;
 import kz.group.repository.ClientsRepository;
 import kz.group.repository.DocumentsRepository;
 import kz.group.repository.ProductsRepository;
 import kz.group.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +19,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
@@ -39,53 +37,34 @@ import java.util.Map;
 public class ClientsController {
     @Autowired
     private ClientsService clientsService;
-
     @Autowired
     private ClientsRepository clientsRepository;
-
     @Autowired
     private UsersService usersService;
-
-    @Autowired
-    private SpringTemplateEngine springTemplateEngine;
-
-    @Autowired
-    private DocumentGenerator documentGenerator;
-
     @Autowired
     private DocumentsService documentsService;
-
-    @Autowired
-    private ProductsRepository productsRepository;
-
     @Autowired
     private AbonementService abonementService;
     @Autowired
-    private DocumentsRepository documentsRepository;
-    @Autowired
-    private AbonementRepository abonementRepository;
+    private VisitsService visitsService;
 
     @GetMapping({"/",""})
     public String showClientsPage(Model model) {
-        List<ClientsEntity> clients = clientsRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
         String username = usersService.getUsername();
         boolean isOwner = usersService.isOwner();
         model.addAttribute("username", username);
         model.addAttribute("userRole", isOwner);
-        model.addAttribute("clients", clients);
-
-        return "clients/index";
+        return findPaginated(1,model);
     }
 
-    @PostMapping({"/",""})
+    @PostMapping({"/searchedClients",})
     public String showSortedClientPage(
             Model model,
             @RequestParam String clientLastName
     )
     {
         if(clientLastName.isEmpty()){
-            List<ClientsEntity> clients = clientsRepository.findAll();
-            model.addAttribute("clients", clients);
+            return "redirect:/clients/";
         } else {
             List<ClientsEntity> clients = clientsService.findByLastName(clientLastName);
             model.addAttribute("clients", clients);
@@ -278,7 +257,7 @@ public class ClientsController {
 
     @GetMapping("/clientProfile")
     public String clientProfile(
-            @RequestParam int id,
+            @RequestParam long id,
             Model model
     ){
         boolean hasAgreement = documentsService.hasAgreement(id);
@@ -286,8 +265,13 @@ public class ClientsController {
         String username = usersService.getUsername();
         boolean isOwner = usersService.isOwner();
 
-        List<DocumentsEntity> clientDocuments = documentsRepository.findByClientId(id);
-        model.addAttribute("clientDocuments", clientDocuments);
+        //Пробный отрезок для проверки входа и выхода в зал
+        LocalDateTime lastVisit = visitsService.lastVisit(id);
+        model.addAttribute("lastVisit", lastVisit);
+        //Конец пробного отрезка
+
+        List<AbonementEntity> abonementList = abonementService.abonementList(id);
+        model.addAttribute("abonementList", abonementList);
 
         model.addAttribute("username", username);
         model.addAttribute("userRole", isOwner);
@@ -296,5 +280,26 @@ public class ClientsController {
         model.addAttribute("agreementFileName", agreementFileName);
         model.addAttribute("client", client);
         return "clients/clientProfile";
+    }
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(
+            @PathVariable (value = "pageNo") int pageNo,
+            Model model
+    ){
+        int pageSize = 15;
+        String username = usersService.getUsername();
+        boolean isOwner = usersService.isOwner();
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", isOwner);
+
+        Page<ClientsEntity> page = clientsService.findPaginated(pageNo, pageSize);
+        List<ClientsEntity> clients = page.getContent();
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("clients", clients);
+        return "clients/index";
     }
 }

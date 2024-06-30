@@ -24,6 +24,9 @@
                 <li class="nav-item">
                     <a th:if="${userRole==true}" class="nav-link" href="/users/">Пользователи</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/visits/v1/inGym">В зале</a>
+                </li>
             </ul>
             <form class="d-flex" th:action="@{/logout}" th:method="POST">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -54,10 +57,12 @@
                          class="rounded" style="width: 200px;">
                     <h5 th:text="${client.firstName + ' ' +client.lastName + ' ' +client.patronymic}" class="my-3"></h5>
                     <p class="text-center mb-1" th:text="${client.dateOfBorn.toString().substring(0,10)}"></p>
-                    <p class="text-center mb-4">Тут будет последнее посещение</p>
-                    <div class="d-flex justify-content-center mb-2">
-                        <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">Войти в зал</button>
-                    </div>
+                    <p class="text-center mb-4"
+                       th:if="${lastVisit!=null}"
+                       th:text="'Последнее посещение: ' + ${lastVisit.toString().substring(0,10)}"></p>
+                    <p class="text-center mb-4"
+                       th:if="${lastVisit==null}"
+                       th:text="'Клиент еще ни разу не посещал зал'"></p>
                 </div>
             </div>
         </div>
@@ -149,39 +154,53 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <a class="btn btn-info " th:href="@{/clients/edit(id=${client.id})}">Абонементы</a>
-                            <a class="btn btn-primary" th:href="@{/abonement/setAbonement(clientId=${client.id})}">Посещения</a>
-                        </div>
-                    </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Абонемент</th>
-                            <th>Был заключен</th>
-                            <th>Действия</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="clientDocument : ${clientDocuments}">
-                            <td th:text="${clientDocument.contractType}"></td>
-                            <td th:text="${clientDocument.createDate.toString().substring(0,10)}"></td>
-                            <td>
-                                <a  target="_blank"
-                                    class="btn btn-primary"
-                                    th:href="@{'/abonements/' + ${clientDocument.contractFileName}}">Посмотреть</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <a class="btn btn-info " th:href="@{/clients/edit(id=${client.id})}">Абонементы</a>
+                        <a class="btn btn-primary" th:href="@{/abonement/setAbonement(clientId=${client.id})}">Посещения</a>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Абонемент</th>
+                        <th>Статус</th>
+                        <th>Был заключен</th>
+                        <th>Начат</th>
+                        <th>Активен до</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="abonement : ${abonementList}">
+                        <td th:text="${abonement.getUuid()}"></td>
+                        <td th:text="${abonement.status == 'notStarted' ? 'Не начат' : 'активен'}"></td>
+                        <td th:text="${abonement.createdDate.toString().substring(0,10)}"></td>
+                        <td th:text="${abonement.startDate==null ? 'Не начат' : abonement.startDate}"></td>
+                        <td th:text="${abonement.endDate==null ? 'Не начат' : abonement.endDate}">
+                        <td class="d-flex space-between">
+                            <a  target="_blank"
+                                class="btn btn-primary ms-1"
+                                th:href="@{'/documents/' + ${abonement.documentId}}">Посмотреть</a>
+                            <a th:if="${abonement.clientInGym==null}"
+                               th:href="@{/visits/v1/enterTheGym(clientId=${client.id},abonementId=${abonement.id})}"
+                               class="btn btn-primary ms-1">Войти в зал</a>
+                            <a th:if="${abonement.clientInGym==false}"
+                               th:href="@{/visits/v1/enterTheGym(clientId=${client.id},abonementId=${abonement.id})}"
+                               class="btn btn-primary ms-1">Войти в зал</a>
+                            <a th:if="${abonement.clientInGym==true}"
+                               th:href="@{/visits/v1/exitTheGym(clientId=${client.id},abonementId=${abonement.id})}"
+                               class="btn btn-primary ms-1">Выйти из зала</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

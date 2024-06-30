@@ -10,8 +10,11 @@ import kz.group.repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AbonementService {
@@ -35,6 +38,8 @@ public class AbonementService {
     }
 
     public void appointAbonement(int clientId,int productId,String html) {
+        //генерируем  uuid
+        UUID abonementUUID = UUID.randomUUID();
         //находим название продукта
         DocumentsEntity clientContract = new DocumentsEntity();
         ProductsEntity product = productsRepository.findById(productId).get();
@@ -47,8 +52,38 @@ public class AbonementService {
         clientAbonement.setCreatedDate(LocalDateTime.now());
         clientAbonement.setStatus("notStarted");
         clientAbonement.setDocumentId(clientContract.getId());
+        clientAbonement.setUuid(abonementUUID);
         abonementRepository.save(clientAbonement);
+    }
 
+    public List<AbonementEntity> abonementList(long clientId) {
+        List<AbonementEntity> clientAbonements = abonementRepository.findByClientId(clientId);
+        return clientAbonements;
+    }
 
+    public void abonementStarted(long abonementId) {
+        AbonementEntity clientAbonement = abonementRepository.findById(abonementId).get();
+        clientAbonement.setStatus("started");
+        clientAbonement.setStartDate(LocalDate.now());
+
+        //нужно для получения сколько будет длится абонемент
+        ProductsEntity product = productsRepository.findById(clientAbonement.getProductId()).get();
+        clientAbonement.setEndDate(LocalDate.now().plusDays(product.getTotalClasses()));
+        clientAbonement.setActiveDays(product.getTotalClasses());
+        abonementRepository.save(clientAbonement);
+    }
+
+    public List<AbonementEntity> clientsInGym(){
+        List<AbonementEntity> abonements = abonementRepository.findAll();
+        List<AbonementEntity> clientsInGym = new ArrayList<>();
+        for(AbonementEntity abonement : abonements) {
+            if (abonement.getClientInGym()){
+                clientsInGym.add(abonement);
+            }
+        }
+        if(clientsInGym.isEmpty()){
+            return null;
+        }
+        return clientsInGym;
     }
 }

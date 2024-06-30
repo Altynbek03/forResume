@@ -31,6 +31,9 @@
         .mp {
             text-align: center;
         }
+        .margin{
+            margin-left: 250px;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +41,7 @@
 <h2>О предоставлении фитнес услуг</h2>
 <div class="signature-section">
     <p>г. Темиртау </p>
-    <p>Сюда поставлю дату.</p>
+    <p style="margin-left: 450px"><strong th:text="'Дата: ' + ${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></strong></p>
 </div>
 
 <p style="text-align: justify">ТОО «ETALON» в лице, Артыкбаева А.О. действующего на основании Свидетельства, именуемый в дальнейшем «Клуб», с одной стороны и г-н/г-жа <strong th:text="${client.lastName + ' ' + client.firstName + ' ' + client.patronymic}"></strong>, именуемый в дальнейшем «Член Клуба», с другой стороны, далее совместно именуемые «Стороны», заключили настоящий Договор о нижеследующем:</p>
@@ -131,7 +134,7 @@
         <p>Директор Артыкбаева А.О.</p>
         <p class="mp">М.П.</p>
     </div>
-    <div class="signature-block">
+    <div class="margin">
         <p><strong>ЧЛЕН КЛУБА</strong></p>
         <p>______________________</p>
         <p>(подпись)</p>

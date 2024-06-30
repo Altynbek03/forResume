@@ -1,18 +1,21 @@
 package kz.group.controller;
 
 import kz.group.entity.ClientsEntity;
-import kz.group.entity.ProductsEntity;
+import kz.group.entity.DocumentsEntity;
 import kz.group.service.ClientsService;
 import kz.group.service.DocumentGenerator;
+import kz.group.service.DocumentsService;
 import kz.group.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/documents")
@@ -27,6 +30,8 @@ public class DocumentsController {
     private DocumentGenerator documentGenerator;
     @Autowired
     private ProductsService productsService;
+    @Autowired
+    private DocumentsService documentsService;
 
     @GetMapping("/generateUserAgreement")
     public String generateUserAgreement(
@@ -42,6 +47,18 @@ public class DocumentsController {
 
 
         return "redirect:/clients/clientProfile?id="+clientId;
+    }
+
+    @GetMapping("/{documentId}")
+    public String getDocument(
+            @PathVariable("documentId") long documentId
+    ) {
+        Optional<DocumentsEntity> clientDocument = documentsService.findById(documentId);
+        if(!clientDocument.isPresent()) {
+            return null;
+        } else {
+            return "redirect:/abonements/" + clientDocument.get().getContractFileName();
+        }
     }
 
 }

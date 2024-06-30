@@ -21,10 +21,12 @@ import java.util.UUID;
 public class DocumentGenerator {
     private final ClientsRepository clientsRepository;
     private final DocumentsRepository documentsRepository;
+    private final ProductsService productsService;
 
-    public DocumentGenerator(ClientsRepository clientsRepository, DocumentsRepository documentsRepository) {
+    public DocumentGenerator(ClientsRepository clientsRepository, DocumentsRepository documentsRepository, ProductsService productsService) {
         this.clientsRepository = clientsRepository;
         this.documentsRepository = documentsRepository;
+        this.productsService = productsService;
     }
 
     public String generateDocument(String html, ClientsEntity client) {
@@ -84,6 +86,7 @@ public class DocumentGenerator {
 
 
             //Сохраняем в базе документов
+
             clientContract.setContractFileName(fileName);
             clientContract.setClientId(clientId);
             clientContract.setContractType(product.getProductName());
